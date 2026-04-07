@@ -1,0 +1,208 @@
+.tarifas-reserva {
+  padding: var(--section-py) 0;
+  background: var(--cream-dark);
+}
+
+.tarifas-reserva__grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ── Tarifas Panel ──────────────────────────────────────────── */
+.tarifas__panel {
+  background: var(--navy);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-dark);
+}
+
+.tarifas__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 32px 24px 24px;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  text-align: center;
+}
+.tarifas__title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.tarifas__subtitle {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Barber pole */
+.tarifas__pole { display: flex; flex-direction: column; gap: 4px; }
+.pole-stripe {
+  width: 28px; height: 8px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e63946, #fff, #0077b6);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.pole-stripe:nth-child(2) { transform: rotate(180deg); }
+
+.tarifas__list {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.tarifas__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.tarifas__row:last-child { border-bottom: none; }
+
+.tarifas__row-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+.tarifas__row-dots {
+  flex: 1;
+  height: 1px;
+  border-bottom: 2px dotted rgba(201,168,76,0.25);
+  margin: 0 8px;
+  min-width: 20px;
+}
+.tarifas__row-price {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.tarifas__cta {
+  padding: 0 28px 28px;
+}
+.tarifas__cta .gold-btn { width: 100%; justify-content: center; }
+
+/* ── Reserva Panel ──────────────────────────────────────────── */
+.reserva__panel {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 40px 36px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.reserva__form { display: flex; flex-direction: column; gap: 14px; }
+
+.reserva__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.reserva__field { position: relative; display: flex; flex-direction: column; gap: 4px; }
+.reserva__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.reserva__field input,
+.reserva__field select {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #e0dcd4;
+  border-radius: var(--r-sm);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-dark);
+  background: var(--cream);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  appearance: none;
+}
+.reserva__field input::placeholder { color: var(--text-light); }
+.reserva__field input:focus,
+.reserva__field select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+.reserva__field input.error,
+.reserva__field select.error {
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
+}
+.reserva__error {
+  font-size: 11px;
+  color: #e63946;
+  font-weight: 600;
+}
+
+.reserva__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.reserva__actions .gold-btn { width: 100%; justify-content: center; }
+.reserva__actions .wa-btn { width: 100%; }
+
+/* Success state */
+.reserva__success {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 64px 40px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  max-width: 480px;
+  margin: 0 auto;
+}
+.reserva__success-icon {
+  width: 72px; height: 72px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  color: var(--navy);
+  margin: 0 auto 24px;
+  font-weight: 900;
+}
+.reserva__success h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+.reserva__success p {
+  color: var(--text-mid);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  margin-bottom: 28px;
+}
+.reserva__success-actions { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.reserva__reset {
+  font-size: 13px;
+  color: var(--text-light);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+@media (max-width: 960px) {
+  .tarifas-reserva__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .reserva__row { grid-template-columns: 1fr; }
+  .reserva__panel { padding: 28px 20px; }
+}

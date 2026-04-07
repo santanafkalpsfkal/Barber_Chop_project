@@ -1,0 +1,109 @@
+/* ── Gold Button ────────────────────────────────────────────── */
+.gold-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: var(--r-sm);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gold-btn--md {
+  padding: 14px 32px;
+  font-size: 12px;
+}
+.gold-btn--lg {
+  padding: 18px 44px;
+  font-size: 13px;
+}
+.gold-btn--sm {
+  padding: 10px 22px;
+  font-size: 11px;
+}
+
+/* Filled */
+.gold-btn:not(.gold-btn--outlined) {
+  background: var(--gold);
+  color: var(--navy);
+  border: 2px solid var(--gold);
+  box-shadow: var(--shadow-gold);
+}
+.gold-btn:not(.gold-btn--outlined):hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(201,168,76,0.4);
+}
+
+/* Outlined */
+.gold-btn--outlined {
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+}
+.gold-btn--outlined:hover {
+  background: var(--gold);
+  color: var(--navy);
+  transform: translateY(-2px);
+}
+
+/* ── WhatsApp Button ────────────────────────────────────────── */
+.wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #25D366;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 16px 28px;
+  border-radius: var(--r-sm);
+  transition: all 0.25s;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.35);
+}
+.wa-btn:hover {
+  background: #1aad54;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(37,211,102,0.45);
+}
+.wa-btn--full { width: 100%; justify-content: center; }
+.wa-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* ── Section Header ─────────────────────────────────────────── */
+.section-header { margin-bottom: 48px; }
+.section-header--center { text-align: center; }
+.section-header__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+.section-header--dark .section-header__title { color: var(--white); }
+.section-header__subtitle {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--text-mid);
+  max-width: 580px;
+  line-height: 1.7;
+}
+.section-header--center .section-header__subtitle { margin: 0 auto; }
+.section-header--dark .section-header__subtitle { color: rgba(255,255,255,0.7); }
+
+/* ── Price Badge ────────────────────────────────────────────── */
+.price-badge {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+}

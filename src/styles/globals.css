@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+  /* Colors */
+  --navy:        #0d1b2e;
+  --navy-mid:    #152540;
+  --navy-light:  #1e3a5f;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c97a;
+  --gold-pale:   #f5e6c0;
+  --cream:       #f8f4ec;
+  --cream-dark:  #ede8dc;
+  --white:       #ffffff;
+  --text-dark:   #1a1a1a;
+  --text-mid:    #4a4a4a;
+  --text-light:  #7a7a7a;
+
+  /* Typography */
+  --font-display: 'Playfair Display', serif;
+  --font-serif:   'Cormorant Garamond', serif;
+  --font-sans:    'Montserrat', sans-serif;
+
+  /* Spacing */
+  --section-py: 80px;
+  --container:  1200px;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+
+  /* Shadows */
+  --shadow-gold: 0 8px 32px rgba(201,168,76,0.25);
+  --shadow-dark: 0 8px 40px rgba(0,0,0,0.35);
+  --shadow-sm:   0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  color: var(--text-dark);
+  background: var(--cream);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a  { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { cursor: pointer; font-family: var(--font-sans); border: none; background: none; }
+
+/* ── Utilities ──────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.gold-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.gold-line::before,
+.gold-line::after {
+  content: '';
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ── Reveal animation ────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal.delay-1 { transition-delay: 0.1s; }
+.reveal.delay-2 { transition-delay: 0.2s; }
+.reveal.delay-3 { transition-delay: 0.3s; }
+.reveal.delay-4 { transition-delay: 0.4s; }
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root { --section-py: 56px; }
+}
