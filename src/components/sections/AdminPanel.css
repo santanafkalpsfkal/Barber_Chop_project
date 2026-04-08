@@ -32,6 +32,21 @@
   margin-bottom: 24px;
 }
 
+.admin-panel__crud-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+
+.admin-panel__block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
 .admin-panel__stat-card,
 .admin-panel__block,
 .admin-panel__reservation-card {
@@ -83,6 +98,134 @@
 
 .admin-panel__empty {
   color: rgba(255,255,255,0.62);
+}
+
+.admin-panel__form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-panel__form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-panel__field {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-panel__field span {
+  color: rgba(255,255,255,0.7);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.admin-panel__field input,
+.admin-panel__field select,
+.admin-panel__field textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: var(--white);
+  font-size: 14px;
+}
+
+.admin-panel__field textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.admin-panel__field input:focus,
+.admin-panel__field select:focus,
+.admin-panel__field textarea:focus {
+  outline: none;
+  border-color: rgba(201,168,76,0.55);
+  box-shadow: 0 0 0 4px rgba(201,168,76,0.12);
+}
+
+.admin-panel__helper {
+  color: rgba(255,255,255,0.54);
+  font-size: 11px;
+}
+
+.admin-panel__form-actions,
+.admin-panel__manager-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-panel__ghost-btn,
+.admin-panel__danger-btn {
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.06);
+}
+
+.admin-panel__ghost-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.admin-panel__danger-btn {
+  border-color: rgba(188,67,67,0.35);
+  color: #ffd7d7;
+  background: rgba(188,67,67,0.14);
+}
+
+.admin-panel__danger-btn:hover {
+  background: rgba(188,67,67,0.22);
+}
+
+.admin-panel__manager-list {
+  display: grid;
+  gap: 12px;
+  max-height: 680px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.admin-panel__manager-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.admin-panel__manager-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-panel__manager-top div,
+.admin-panel__manager-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-panel__manager-top strong {
+  color: var(--white);
+}
+
+.admin-panel__manager-top span,
+.admin-panel__manager-meta span {
+  color: rgba(255,255,255,0.66);
+  font-size: 13px;
 }
 
 .admin-panel__service-list {
@@ -151,12 +294,22 @@
 
 @media (max-width: 900px) {
   .admin-panel__stats,
+  .admin-panel__crud-grid,
   .admin-panel__grid,
-  .admin-panel__reservation-card {
+  .admin-panel__reservation-card,
+  .admin-panel__form-row {
     grid-template-columns: 1fr;
   }
 
   .admin-panel {
     padding: 24px;
   }
+
+  .admin-panel__block-head,
+  .admin-panel__manager-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
 }
+

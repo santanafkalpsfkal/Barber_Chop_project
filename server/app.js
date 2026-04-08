@@ -362,7 +362,45 @@ function adminMiddleware(req, res, next) {
   next();
 }
 
-async function listAvailability(barberId, date, serviceId) {
+async function getReservationDetailById(id) {
+  const reservations = await sql`
+    SELECT *
+    FROM vista_reservas_detalle
+    WHERE id = ${Number(id)}
+    LIMIT 1
+  `;
+
+  return reservations[0] || null;
+}
+
+function validateReservationStatus(status) {
+  return ['pendiente', 'confirmada', 'completada', 'cancelada'].includes(status);
+}
+
+async function resolveReservationEntities({ userId, barberId, serviceId }) {
+  const [user] = await sql`
+    SELECT id, activo
+    FROM usuarios
+    WHERE id = ${Number(userId)}
+    LIMIT 1
+  `;
+  const [barber] = await sql`
+    SELECT id, activo
+    FROM barberos
+    WHERE id = ${Number(barberId)}
+    LIMIT 1
+  `;
+  const [service] = await sql`
+    SELECT id, activo
+    FROM servicios
+    WHERE id = ${Number(serviceId)}
+    LIMIT 1
+  `;
+
+  return { user, barber, service }; 
+}
+
+async function listAvailability(barberId, date, serviceId, excludeReservationId = null) {
   const [service] = await sql`
     SELECT id, duracion_minutos
     FROM servicios
@@ -390,7 +428,7 @@ async function listAvailability(barberId, date, serviceId) {
   }
 
   const reservations = await sql`
-    SELECT r.hora_reserva::TEXT AS hora_reserva, s.duracion_minutos
+    SELECT r.id, r.hora_reserva::TEXT AS hora_reserva, s.duracion_minutos
     FROM reservas r
     JOIN servicios s ON s.id = r.servicio_id
     WHERE r.barbero_id = ${Number(barberId)}
@@ -407,6 +445,10 @@ async function listAvailability(barberId, date, serviceId) {
     for (let minute = scheduleStart; minute + duration <= scheduleEnd; minute += 30) {
       const slotEnd = minute + duration;
       const hasConflict = reservations.some((reservation) => {
+        if (excludeReservationId && Number(reservation.id) === Number(excludeReservationId)) {
+          return false;
+        }
+
         const reservationStart = timeStringToMinutes(reservation.hora_reserva);
         const reservationEnd = reservationStart + Number(reservation.duracion_minutos);
         return overlaps(minute, slotEnd, reservationStart, reservationEnd);
@@ -644,6 +686,130 @@ app.get('/api/admin/dashboard', authMiddleware, adminMiddleware, async (_req, re
     reservationsByStatus,
     recentReservations,
   });
+});
+
+app.get('/api/admin/users', authMiddleware, adminMiddleware, async (_req, res) => {
+  const users = await sql`
+    SELECT id, uuid, nombre, email, rol, telefono, fecha_registro, activo, ultimo_acceso
+    FROM usuarios
+    WHERE activo = TRUE
+    ORDER BY rol ASC, nombre ASC
+  `;
+
+  res.json({ users: users.map(sanitizeUser) });
+});
+
+app.get('/api/admin/reservations', authMiddleware, adminMiddleware, async (_req, res) => {
+  const reservations = await sql`
+    SELECT *
+    FROM vista_reservas_detalle
+    ORDER BY fecha_reserva DESC, hora_reserva DESC, fecha_creacion DESC
+  `;
+
+  res.json({ reservations });
+});
+
+app.post('/api/admin/reservations', authMiddleware, adminMiddleware, async (req, res) => {
+  const {
+    userId = '',
+    barberId = '',
+    serviceId = '',
+    date = '',
+    time = '',
+    status = 'pendiente',
+    notes = '',
+  } = req.body || {};
+
+  if (!userId || !barberId || !serviceId || !date || !time) {
+    return res.status(400).json({ message: 'Completa usuario, barbero, servicio, fecha y hora.' });
+  }
+
+  if (!validateReservationStatus(status)) {
+    return res.status(400).json({ message: 'Estado de reserva no válido.' });
+  }
+
+  const { user, barber, service } = await resolveReservationEntities({ userId, barberId, serviceId });
+  if (!user?.activo || !barber?.activo || !service?.activo) {
+    return res.status(400).json({ message: 'Usuario, barbero o servicio no válido.' });
+  }
+
+  const slots = await listAvailability(barber.id, date, service.id);
+  if (status !== 'cancelada' && !slots.includes(String(time).slice(0, 5))) {
+    return res.status(409).json({ message: 'Ese horario ya no está disponible para el barbero seleccionado.' });
+  }
+
+  const inserted = await sql`
+    INSERT INTO reservas (usuario_id, barbero_id, servicio_id, fecha_reserva, hora_reserva, estado, notas)
+    VALUES (${user.id}, ${barber.id}, ${service.id}, ${date}, ${time}, ${status}, ${notes.trim() || null})
+    RETURNING id
+  `;
+
+  const reservation = await getReservationDetailById(inserted[0].id);
+  res.status(201).json({ reservation });
+});
+
+app.put('/api/admin/reservations/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  const reservationId = Number(req.params.id);
+  const currentReservation = await getReservationDetailById(reservationId);
+
+  if (!currentReservation) {
+    return res.status(404).json({ message: 'Reserva no encontrada.' });
+  }
+
+  const {
+    userId = currentReservation.usuario_id,
+    barberId = currentReservation.barbero_id,
+    serviceId = currentReservation.servicio_id,
+    date = currentReservation.fecha_reserva,
+    time = String(currentReservation.hora_reserva).slice(0, 5),
+    status = currentReservation.estado,
+    notes = currentReservation.notas || '',
+  } = req.body || {};
+
+  if (!validateReservationStatus(status)) {
+    return res.status(400).json({ message: 'Estado de reserva no válido.' });
+  }
+
+  const { user, barber, service } = await resolveReservationEntities({ userId, barberId, serviceId });
+  if (!user?.activo || !barber?.activo || !service?.activo) {
+    return res.status(400).json({ message: 'Usuario, barbero o servicio no válido.' });
+  }
+
+  const slots = await listAvailability(barber.id, date, service.id, reservationId);
+  if (status !== 'cancelada' && !slots.includes(String(time).slice(0, 5))) {
+    return res.status(409).json({ message: 'Ese horario ya no está disponible para el barbero seleccionado.' });
+  }
+
+  await sql`
+    UPDATE reservas
+    SET usuario_id = ${user.id},
+        barbero_id = ${barber.id},
+        servicio_id = ${service.id},
+        fecha_reserva = ${date},
+        hora_reserva = ${time},
+        estado = ${status},
+        notas = ${notes.trim() || null}
+    WHERE id = ${reservationId}
+  `;
+
+  const reservation = await getReservationDetailById(reservationId);
+  res.json({ reservation });
+});
+
+app.delete('/api/admin/reservations/:id', authMiddleware, adminMiddleware, async (req, res) => {
+  const reservationId = Number(req.params.id);
+  const currentReservation = await getReservationDetailById(reservationId);
+
+  if (!currentReservation) {
+    return res.status(404).json({ message: 'Reserva no encontrada.' });
+  }
+
+  await sql`
+    DELETE FROM reservas
+    WHERE id = ${reservationId}
+  `;
+
+  res.json({ success: true });
 });
 
 app.use((error, _req, res, _next) => {
