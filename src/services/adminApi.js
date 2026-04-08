@@ -1,8 +1,11 @@
 async function parseResponse(response) {
-  const payload = await response.json().catch(() => ({}));
+  const contentType = response.headers.get('content-type') || '';
+  const payload = contentType.includes('application/json')
+    ? await response.json().catch(() => ({}))
+    : { message: await response.text().catch(() => '') };
 
   if (!response.ok) {
-    throw new Error(payload.message || 'No se pudo completar la solicitud.');
+    throw new Error(payload.message || `Solicitud fallida con código ${response.status}.`);
   }
 
   return payload;
