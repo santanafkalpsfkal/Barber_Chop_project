@@ -1,13 +1,52 @@
-import { TARIFAS, SERVICIOS, BARBEROS, HORARIOS_DISPONIBLES, BARBERIA } from '../../data/barberia';
+import { useEffect } from 'react';
+import { TARIFAS, BARBERIA } from '../../data/barberia';
 import { SectionHeader, GoldButton, WAButton, Reveal } from '../ui';
-import { useReservation } from '../../hooks';
+import { useReservationStore } from '../../store/reservationStore';
+import { useCatalogStore } from '../../store/catalogStore';
+import { useAuthStore } from '../../store/authStore';
 import './TarifasReserva.css';
 
 export default function TarifasReserva() {
-  const { form, errores, enviado, handleChange, handleSubmit, resetForm } = useReservation();
+  const user = useAuthStore((state) => state.user);
+  const services = useCatalogStore((state) => state.services);
+  const barbers = useCatalogStore((state) => state.barbers);
+  const availability = useCatalogStore((state) => state.availability);
+  const availabilityStatus = useCatalogStore((state) => state.availabilityStatus);
+  const fetchAvailability = useCatalogStore((state) => state.fetchAvailability);
+  const clearAvailability = useCatalogStore((state) => state.clearAvailability);
+
+  const form = useReservationStore((state) => state.form);
+  const errores = useReservationStore((state) => state.errors);
+  const enviado = useReservationStore((state) => state.submitted);
+  const lastReservation = useReservationStore((state) => state.lastReservation);
+  const status = useReservationStore((state) => state.status);
+  const requestError = useReservationStore((state) => state.error);
+  const updateField = useReservationStore((state) => state.updateField);
+  const submitReservation = useReservationStore((state) => state.submitReservation);
+  const resetForm = useReservationStore((state) => state.resetForm);
 
   // Min date = today
   const today = new Date().toISOString().split('T')[0];
+
+  useEffect(() => {
+    fetchAvailability({ barberId: form.barberId, date: form.date, serviceId: form.serviceId });
+  }, [form.barberId, form.date, form.serviceId, fetchAvailability]);
+
+  useEffect(() => () => clearAvailability(), [clearAvailability]);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    updateField(name, value);
+
+    if (name === 'serviceId' || name === 'barberId' || name === 'date') {
+      updateField('time', '');
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await submitReservation();
+  };
 
   if (enviado) {
     return (
@@ -16,7 +55,10 @@ export default function TarifasReserva() {
           <div className="reserva__success">
             <div className="reserva__success-icon">✓</div>
             <h3>¡Cita Reservada!</h3>
-            <p>Nos contactaremos contigo al <strong>{form.telefono}</strong> para confirmar tu cita.</p>
+            <p>
+              Tu reserva para <strong>{lastReservation?.servicio_nombre}</strong> quedó en estado
+              <strong> {lastReservation?.estado}</strong>.
+            </p>
             <div className="reserva__success-actions">
               <WAButton phone={BARBERIA.whatsapp} text="Confirmar por WhatsApp" />
               <button className="reserva__reset" onClick={resetForm}>Hacer otra reserva</button>
@@ -71,75 +113,90 @@ export default function TarifasReserva() {
               <SectionHeader tag="Online" title="Reserva Tu Turno" center={false} />
 
               <form className="reserva__form" onSubmit={handleSubmit} noValidate>
-                <div className="reserva__row">
-                  <div className="reserva__field">
-                    <input
-                      name="nombre" type="text" placeholder="Nombre completo"
-                      value={form.nombre} onChange={handleChange}
-                      className={errores.nombre ? 'error' : ''}
-                    />
-                    {errores.nombre && <span className="reserva__error">{errores.nombre}</span>}
+                {requestError && <p className="reserva__request-error">{requestError}</p>}
+
+                {!user && (
+                  <div className="reserva__login-required">
+                    <p>Debes iniciar sesión o crear una cuenta antes de reservar.</p>
+                    <GoldButton href="#login" size="sm">Ir al acceso</GoldButton>
                   </div>
-                  <div className="reserva__field">
-                    <input
-                      name="telefono" type="tel" placeholder="Teléfono / WhatsApp"
-                      value={form.telefono} onChange={handleChange}
-                      className={errores.telefono ? 'error' : ''}
-                    />
-                    {errores.telefono && <span className="reserva__error">{errores.telefono}</span>}
+                )}
+
+                {user && (
+                  <div className="reserva__customer-card">
+                    <strong>{user.fullName}</strong>
+                    <span>{user.email}</span>
+                    <span>{user.phone || 'Sin teléfono registrado'}</span>
                   </div>
-                </div>
+                )}
 
                 <div className="reserva__field">
                   <select
-                    name="servicio" value={form.servicio} onChange={handleChange}
-                    className={errores.servicio ? 'error' : ''}
+                    name="serviceId" value={form.serviceId} onChange={handleChange}
+                    className={errores.serviceId ? 'error' : ''}
                   >
                     <option value="">— Elige tu servicio —</option>
-                    {SERVICIOS.map(s => (
-                      <option key={s.id} value={s.nombre}>{s.nombre} · ${s.precio.toLocaleString('es-CO')}</option>
+                    {services.map((s) => (
+                      <option key={s.id} value={s.id}>{s.nombre} · ${Number(s.precio).toLocaleString('es-CO')}</option>
                     ))}
                   </select>
-                  {errores.servicio && <span className="reserva__error">{errores.servicio}</span>}
+                  {errores.serviceId && <span className="reserva__error">{errores.serviceId}</span>}
+                </div>
+
+                <div className="reserva__field">
+                  <select name="barberId" value={form.barberId} onChange={handleChange} className={errores.barberId ? 'error' : ''}>
+                    <option value="">— Elige tu barbero —</option>
+                    {barbers.map((b) => (
+                      <option key={b.id} value={b.id}>{b.nombre} · {b.especialidad}</option>
+                    ))}
+                  </select>
+                  {errores.barberId && <span className="reserva__error">{errores.barberId}</span>}
                 </div>
 
                 <div className="reserva__row">
                   <div className="reserva__field">
                     <label className="reserva__label">Fecha</label>
                     <input
-                      name="fecha" type="date" min={today}
-                      value={form.fecha} onChange={handleChange}
-                      className={errores.fecha ? 'error' : ''}
+                      name="date" type="date" min={today}
+                      value={form.date} onChange={handleChange}
+                      className={errores.date ? 'error' : ''}
                     />
-                    {errores.fecha && <span className="reserva__error">{errores.fecha}</span>}
+                    {errores.date && <span className="reserva__error">{errores.date}</span>}
                   </div>
 
                   <div className="reserva__field">
                     <label className="reserva__label">Hora</label>
                     <select
-                      name="hora" value={form.hora} onChange={handleChange}
-                      className={errores.hora ? 'error' : ''}
+                      name="time" value={form.time} onChange={handleChange}
+                      className={errores.time ? 'error' : ''}
                     >
                       <option value="">— Hora —</option>
-                      {HORARIOS_DISPONIBLES.map(h => (
-                        <option key={h} value={h}>{h}</option>
+                      {availability.map((slot) => (
+                        <option key={slot} value={slot}>{slot}</option>
                       ))}
                     </select>
-                    {errores.hora && <span className="reserva__error">{errores.hora}</span>}
+                    {errores.time && <span className="reserva__error">{errores.time}</span>}
+                    {availabilityStatus === 'loading' && <span className="reserva__helper">Buscando horarios disponibles...</span>}
+                    {availabilityStatus === 'success' && form.barberId && form.date && form.serviceId && availability.length === 0 && (
+                      <span className="reserva__helper">No hay horarios disponibles para esa selección.</span>
+                    )}
                   </div>
                 </div>
 
                 <div className="reserva__field">
-                  <select name="barbero" value={form.barbero} onChange={handleChange}>
-                    <option value="">— Sin preferencia de barbero —</option>
-                    {BARBEROS.map(b => (
-                      <option key={b.id} value={b.nombre}>{b.nombre} · {b.especialidad}</option>
-                    ))}
-                  </select>
+                  <textarea
+                    name="notes"
+                    placeholder="Notas para tu reserva"
+                    value={form.notes}
+                    onChange={handleChange}
+                    rows="4"
+                  />
                 </div>
 
                 <div className="reserva__actions">
-                  <GoldButton size="lg">Confirmar Reserva</GoldButton>
+                  <button type="submit" className="gold-btn gold-btn--lg" disabled={status === 'loading' || !user}>
+                    {status === 'loading' ? 'Guardando reserva...' : 'Confirmar Reserva'}
+                  </button>
                   <WAButton phone={BARBERIA.whatsapp} />
                 </div>
               </form>

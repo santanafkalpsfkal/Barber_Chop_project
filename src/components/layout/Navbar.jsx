@@ -16,8 +16,11 @@ const NAV_LINKS = [
 export default function Navbar() {
   const [scrolled,   setScrolled]   = useState(false);
   const [menuOpen,   setMenuOpen]   = useState(false);
-  const active = useActiveSection(['inicio','servicios','galeria','tarifas','reservar']);
   const user = useAuthStore((state) => state.user);
+  const navLinks = user?.role === 'admin'
+    ? [...NAV_LINKS, { label: 'Admin', href: '#admin' }]
+    : NAV_LINKS;
+  const active = useActiveSection(navLinks.map((link) => link.href.slice(1)));
   const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="navbar__nav">
-          {NAV_LINKS.map(l => (
+          {navLinks.map(l => (
             <a
               key={l.label}
               href={l.href}
@@ -75,7 +78,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className={`navbar__mobile ${menuOpen ? 'navbar__mobile--open' : ''}`}>
-        {NAV_LINKS.map(l => (
+        {navLinks.map(l => (
           <a key={l.label} href={l.href} className="navbar__mobile-link" onClick={close}>
             {l.label}
           </a>

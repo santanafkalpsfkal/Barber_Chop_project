@@ -1,5 +1,6 @@
 import { BARBEROS } from '../../data/barberia';
 import { SectionHeader, Reveal } from '../ui';
+import { useCatalogStore } from '../../store/catalogStore';
 import './Equipo.css';
 
 const AVATARS = [
@@ -9,6 +10,9 @@ const AVATARS = [
 ];
 
 export default function Equipo() {
+  const barbers = useCatalogStore((state) => state.barbers);
+  const barberList = barbers.length > 0 ? barbers : BARBEROS;
+
   return (
     <section className="equipo">
       <div className="container">
@@ -18,12 +22,12 @@ export default function Equipo() {
           subtitle="Profesionales apasionados con años de experiencia dando el mejor estilo."
         />
         <div className="equipo__grid">
-          {BARBEROS.map((b, i) => (
+          {barberList.map((b, i) => (
             <Reveal key={b.id} delay={i + 1}>
               <div className="equipo__card">
                 <div className="equipo__img-wrap">
-                  <img src={AVATARS[i]} alt={b.nombre} />
-                  <div className="equipo__badge">{b.exp}</div>
+                  <img src={AVATARS[i % AVATARS.length]} alt={b.nombre} />
+                  <div className="equipo__badge">Staff</div>
                 </div>
                 <div className="equipo__info">
                   <h3 className="equipo__nombre">{b.nombre}</h3>

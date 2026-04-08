@@ -50,6 +50,30 @@ ChangeMe123!
 
 El frontend usa Zustand para persistir sesión y consume la API Express conectada a Neon Postgres.
 
+## Despliegue en Vercel
+
+Este proyecto ya quedó preparado para desplegarse en Vercel con:
+
+- frontend estático de React
+- funciones serverless en `/api`
+- conexión a Neon Postgres
+- panel admin protegido por JWT
+
+En Vercel debes crear estas variables de entorno:
+
+```env
+DATABASE_URL=tu-string-de-neon
+JWT_SECRET=una-clave-larga-y-segura
+ADMIN_NAME=Admin BarberKing
+ADMIN_EMAIL=admin@barberking.com
+ADMIN_PASSWORD=ChangeMe123!
+```
+
+Después del deploy, Vercel usará `vercel.json` para enrutar:
+
+- `/api/*` hacia la API serverless
+- el resto hacia la SPA de React
+
 ---
 
 ## 🏗️ Arquitectura del proyecto

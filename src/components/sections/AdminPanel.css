@@ -1,0 +1,162 @@
+.admin-panel-section {
+  padding: var(--section-py) 0;
+  background:
+    radial-gradient(circle at top left, rgba(201,168,76,0.18), transparent 28%),
+    linear-gradient(180deg, #101f33 0%, #0b1727 100%);
+}
+
+.admin-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 28px;
+  padding: 36px;
+  box-shadow: var(--shadow-dark);
+}
+
+.admin-panel .section-header {
+  margin-bottom: 28px;
+}
+
+.admin-panel__error {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(167,43,43,0.22);
+  color: #ffd5d5;
+}
+
+.admin-panel__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.admin-panel__stat-card,
+.admin-panel__block,
+.admin-panel__reservation-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 22px;
+}
+
+.admin-panel__stat-card {
+  padding: 22px;
+  display: grid;
+  gap: 10px;
+}
+
+.admin-panel__stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.64);
+}
+
+.admin-panel__stat-card strong {
+  font-family: var(--font-display);
+  font-size: clamp(42px, 5vw, 56px);
+  line-height: 1;
+  color: var(--gold-light);
+}
+
+.admin-panel__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+}
+
+.admin-panel__block {
+  padding: 24px;
+}
+
+.admin-panel__block h3 {
+  font-family: var(--font-display);
+  color: var(--white);
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.admin-panel__subheading {
+  margin-top: 26px;
+}
+
+.admin-panel__empty {
+  color: rgba(255,255,255,0.62);
+}
+
+.admin-panel__service-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-panel__service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(13,27,46,0.6);
+  color: var(--white);
+}
+
+.admin-panel__service-row strong {
+  color: var(--gold-light);
+}
+
+.admin-panel__reservations {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-panel__reservation-card {
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  color: var(--white);
+}
+
+.admin-panel__reservation-card div {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-panel__reservation-card strong {
+  font-size: 14px;
+}
+
+.admin-panel__reservation-card span {
+  font-size: 13px;
+  color: rgba(255,255,255,0.68);
+}
+.admin-panel__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.admin-panel__status--pendiente { background: rgba(233, 168, 35, 0.28); }
+.admin-panel__status--confirmada { background: rgba(48, 148, 86, 0.35); }
+.admin-panel__status--completada { background: rgba(61, 112, 214, 0.35); }
+.admin-panel__status--cancelada { background: rgba(188, 67, 67, 0.35); }
+
+@media (max-width: 900px) {
+  .admin-panel__stats,
+  .admin-panel__grid,
+  .admin-panel__reservation-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-panel {
+    padding: 24px;
+  }
+}

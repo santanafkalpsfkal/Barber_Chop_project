@@ -3,7 +3,7 @@ import { GoldButton } from '../ui';
 import { useAuthStore } from '../../store/authStore';
 
 const INITIAL_LOGIN = { email: '', password: '' };
-const INITIAL_REGISTER = { fullName: '', email: '', password: '' };
+const INITIAL_REGISTER = { fullName: '', email: '', password: '', phone: '' };
 
 export default function AuthPanel() {
   const [loginForm, setLoginForm] = useState(INITIAL_LOGIN);
@@ -23,10 +23,11 @@ export default function AuthPanel() {
 
   const isLoading = status === 'loading';
   const isAuthenticated = Boolean(user);
+  const isAdmin = user?.role === 'admin';
 
   const welcomeText = user
     ? `Sesión iniciada como ${user.fullName}. Tu rol actual es ${user.role}.`
-    : 'Conecta tu panel para gestionar reservas, clientes y accesos internos de la barbería.';
+    : 'Crea tu cuenta para reservar. Solo las credenciales admin podrán abrir el dashboard.';
 
   const handleModeChange = (nextMode) => {
     clearError();
@@ -45,8 +46,8 @@ export default function AuthPanel() {
 
   return (
     <aside className="auth-panel">
-      <div className="auth-panel__eyebrow">Acceso privado</div>
-      <h2 className="auth-panel__title">Login conectado a Neon Postgres</h2>
+      <div className="auth-panel__eyebrow">Acceso y reservas</div>
+      <h2 className="auth-panel__title">Clientes y administradores</h2>
       <p className="auth-panel__subtitle">{welcomeText}</p>
 
       <div className="auth-panel__switch">
@@ -75,7 +76,7 @@ export default function AuthPanel() {
             <input
               type="email"
               name="email"
-              placeholder="admin@barberking.com"
+              placeholder="admin@barberia.com"
               value={loginForm.email}
               onChange={(event) => setLoginForm((current) => ({ ...current, email: event.target.value }))}
               required
@@ -92,7 +93,7 @@ export default function AuthPanel() {
               required
             />
           </label>
-          <GoldButton size="md">{isLoading ? 'Validando...' : 'Entrar al panel'}</GoldButton>
+          <GoldButton size="md" type="submit" disabled={isLoading}>{isLoading ? 'Validando...' : 'Entrar'}</GoldButton>
         </form>
       )}
 
@@ -121,6 +122,16 @@ export default function AuthPanel() {
             />
           </label>
           <label className="auth-panel__field">
+            <span>Teléfono</span>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="555-123-4567"
+              value={registerForm.phone}
+              onChange={(event) => setRegisterForm((current) => ({ ...current, phone: event.target.value }))}
+            />
+          </label>
+          <label className="auth-panel__field">
             <span>Contraseña</span>
             <input
               type="password"
@@ -132,7 +143,7 @@ export default function AuthPanel() {
               minLength="6"
             />
           </label>
-          <GoldButton size="md">{isLoading ? 'Creando...' : 'Crear cuenta'}</GoldButton>
+          <GoldButton size="md" type="submit" disabled={isLoading}>{isLoading ? 'Creando...' : 'Crear cuenta'}</GoldButton>
         </form>
       )}
 
@@ -150,13 +161,19 @@ export default function AuthPanel() {
             <span className="auth-panel__session-label">Rol</span>
             <strong>{user.role}</strong>
           </div>
+          {isAdmin && (
+            <div className="auth-panel__session-card">
+              <span className="auth-panel__session-label">Acceso</span>
+              <strong>Panel admin habilitado</strong>
+            </div>
+          )}
           <GoldButton size="md" outlined onClick={logout}>Cerrar sesión</GoldButton>
         </div>
       )}
 
       <div className="auth-panel__hint">
-        <span>Admin por defecto:</span>
-        <strong>admin@barberking.com / ChangeMe123!</strong>
+        <span>Solo las credenciales admin pueden entrar al dashboard:</span>
+        <strong>admin@barberia.com / admin123</strong>
       </div>
     </aside>
   );

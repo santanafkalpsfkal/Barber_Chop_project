@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/((?!api/|static/|favicon.ico|asset-manifest.json|manifest.json|logo192.png|logo512.png|robots.txt).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -100,6 +100,14 @@
 }
 
 .reserva__form { display: flex; flex-direction: column; gap: 14px; }
+.reserva__request-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(230,57,70,0.1);
+  color: #c72633;
+  font-size: 13px;
+  font-weight: 600;
+}
 
 .reserva__row {
   display: grid;
@@ -117,7 +125,8 @@
 }
 
 .reserva__field input,
-.reserva__field select {
+.reserva__field select,
+.reserva__field textarea {
   width: 100%;
   padding: 13px 16px;
   border: 1.5px solid #e0dcd4;
@@ -130,15 +139,21 @@
   outline: none;
   appearance: none;
 }
+.reserva__field textarea {
+  resize: vertical;
+  min-height: 110px;
+}
 .reserva__field input::placeholder { color: var(--text-light); }
 .reserva__field input:focus,
-.reserva__field select:focus {
+.reserva__field select:focus,
+.reserva__field textarea:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
   background: var(--white);
 }
 .reserva__field input.error,
-.reserva__field select.error {
+.reserva__field select.error,
+.reserva__field textarea.error {
   border-color: #e63946;
   box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
 }
@@ -147,12 +162,38 @@
   color: #e63946;
   font-weight: 600;
 }
+.reserva__helper {
+  font-size: 11px;
+  color: var(--text-light);
+}
+.reserva__login-required,
+.reserva__customer-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--cream-dark);
+  border: 1px solid rgba(13,27,46,0.08);
+}
+.reserva__customer-card strong {
+  color: var(--navy);
+}
+.reserva__customer-card span,
+.reserva__login-required p {
+  font-size: 13px;
+  color: var(--text-mid);
+}
 
 .reserva__actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-top: 4px;
+}
+.reserva__actions .gold-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
 }
 .reserva__actions .gold-btn { width: 100%; justify-content: center; }
 .reserva__actions .wa-btn { width: 100%; }

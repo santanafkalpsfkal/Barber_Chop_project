@@ -2,10 +2,10 @@ import { useScrollReveal } from '../../hooks';
 import './ui.css';
 
 // ── Gold CTA Button ──────────────────────────────────────────
-export function GoldButton({ children, href, onClick, outlined = false, size = 'md' }) {
+export function GoldButton({ children, href, onClick, outlined = false, size = 'md', type = 'button', disabled = false }) {
   const cls = `gold-btn ${outlined ? 'gold-btn--outlined' : ''} gold-btn--${size}`;
   if (href) return <a href={href} className={cls} onClick={onClick}>{children}</a>;
-  return <button type="button" className={cls} onClick={onClick}>{children}</button>;
+  return <button type={type} className={cls} onClick={onClick} disabled={disabled}>{children}</button>;
 }
 
 // ── WhatsApp Button ──────────────────────────────────────────
